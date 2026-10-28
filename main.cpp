@@ -65,8 +65,10 @@ void task_if26() {
 
 // Geom9: квадрат зі стороною a, верхня сторона лежить на осі x,
 // центр квадрата і вписаного кола (0, -a/2), радіус кола a/2.
-// Світло-зелена область: частина кола зліва вище діагоналі
-// (від лівого нижнього до правого верхнього кута).
+// Світло-зелена область розбита на три прості частини (відносно центра кола):
+// 1) повний сектор (чверть кола): зліва вгорі від центра;
+// 2) половина сектора (45 градусів): зліва внизу, між горизонталлю і діагоналлю;
+// 3) прямокутний трикутний сектор справа: між вертикаллю вгору і діагоналлю.
 void task_geom9() {
     double a, x, y;
     cout << "************* Geom 9 *****************" << endl;
@@ -83,9 +85,12 @@ void task_geom9() {
         return;
     }
     double xc = 0, yc = -a / 2, r = a / 2;
-    bool inCircle = pow(x - xc, 2) + pow(y - yc, 2) <= r * r; // всередині кола
-    bool aboveDiagonal = (y - yc) >= (x - xc);                // вище діагоналі
-    if (inCircle && aboveDiagonal)
+    double dx = x - xc, dy = y - yc;  // координати відносно центра кола
+    bool inCircle = dx * dx + dy * dy <= r * r;          // всередині кола
+    bool fullSector = dx <= 0 && dy >= 0;                // частина 1: повний сектор
+    bool halfSector = dx <= 0 && dy < 0 && dy >= dx;     // частина 2: половина сектора
+    bool rightPart = dx > 0 && dy >= dx;                 // частина 3: правий трикутний сектор
+    if (inCircle && (fullSector || halfSector || rightPart))
         cout << "Point is in the light green area." << endl;
     else
         cout << "Point is NOT in the light green area." << endl;
